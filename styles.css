@@ -488,3 +488,87 @@ ul{ margin:0; padding:0; list-style:none; }
   [data-reveal]{ opacity:1; transform:none; transition:none; }
   .btn,.card,.textlink .arw{ transition:none; }
 }
+
+/* ============================================================
+   INQUIRY DATE-RANGE CALENDAR
+   ============================================================ */
+.datepick{
+  background:rgba(255,255,255,.03);
+  border:1px solid var(--line-dk);
+  border-radius:var(--radius);
+  padding:.9rem .9rem 1rem;
+}
+.dp-head{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:.6rem; margin-bottom:.7rem;
+}
+.dp-title{
+  font-family:var(--label); text-transform:uppercase; letter-spacing:.14em;
+  font-size:.82rem; color:var(--bone); font-weight:600;
+}
+.dp-nav{
+  width:34px; height:34px; flex:none; cursor:pointer;
+  display:inline-flex; align-items:center; justify-content:center;
+  font-size:1.25rem; line-height:1; color:var(--stone);
+  background:rgba(255,255,255,.04); border:1px solid var(--line-dk);
+  border-radius:var(--radius);
+  transition:color .2s var(--ease), border-color .2s var(--ease), background .2s var(--ease);
+}
+.dp-nav:hover{ color:var(--ink); background:var(--brass); border-color:var(--brass); }
+
+.dp-months{ display:grid; grid-template-columns:1fr; gap:1.2rem; }
+@media (min-width:720px){ .dp-months{ grid-template-columns:1fr 1fr; } }
+
+.dp-mname{
+  font-family:var(--display); font-size:.95rem; letter-spacing:.03em;
+  color:var(--brass-hi); text-align:center; margin-bottom:.5rem;
+}
+.dp-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
+.dp-dow{
+  font-family:var(--label); text-transform:uppercase; letter-spacing:.08em;
+  font-size:.62rem; color:var(--stone-dk); text-align:center;
+  padding-bottom:.35rem;
+}
+.dp-day{
+  aspect-ratio:1 / 1; width:100%; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--body); font-size:.86rem; color:var(--bone);
+  background:transparent; border:1px solid transparent; border-radius:var(--radius);
+  transition:background .15s var(--ease), color .15s var(--ease), border-color .15s var(--ease);
+}
+.dp-day:hover{ border-color:var(--brass); color:var(--brass-hi); }
+.dp-day.is-disabled{ color:rgba(157,148,126,.35); cursor:default; }
+.dp-day.is-today{ border-color:var(--line-dk); }
+.dp-day.in-range{ background:rgba(199,154,70,.16); border-radius:0; color:var(--bone); }
+.dp-day.is-end-preview{ background:rgba(199,154,70,.16); }
+.dp-day.is-sel{
+  background:var(--brass); color:var(--ink); font-weight:600;
+  border-color:var(--brass);
+}
+.dp-day.is-sel:hover{ background:var(--brass-hi); border-color:var(--brass-hi); color:var(--ink); }
+.dp-day.is-start{ border-top-right-radius:0; border-bottom-right-radius:0; }
+.dp-day.is-end{ border-top-left-radius:0; border-bottom-left-radius:0; }
+
+.dp-foot{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:.8rem; margin-top:1rem; padding-top:.85rem;
+  border-top:1px solid var(--line-dk);
+}
+.dp-readout{ font-size:.9rem; color:var(--stone); }
+.dp-readout.has-val{ color:var(--bone); font-weight:500; }
+.dp-clear{
+  flex:none; cursor:pointer;
+  font-family:var(--label); text-transform:uppercase; letter-spacing:.12em;
+  font-size:.68rem; font-weight:600; color:var(--brass-lo);
+  background:none; border:0; padding:.3rem .1rem;
+  border-bottom:1px solid transparent;
+  transition:color .2s var(--ease), border-color .2s var(--ease);
+}
+.dp-clear:hover{ color:var(--brass); border-color:var(--brass); }
+
+.dp-flex{
+  display:flex; align-items:center; gap:.55rem; margin-top:.85rem;
+  font-family:var(--body); font-size:.86rem; color:var(--stone);
+  text-transform:none; letter-spacing:normal; cursor:pointer;
+}
+.dp-flex input{ width:16px; height:16px; accent-color:var(--brass); cursor:pointer; }

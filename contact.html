@@ -59,7 +59,23 @@
               </select></div>
             <div class="field"><label for="party">Party size</label>
               <select id="party" name="party"><option>1</option><option>2</option><option>3–4</option><option>5–8</option><option>9+</option></select></div>
-            <div class="field full"><label for="dates">Preferred dates</label><input id="dates" name="dates" placeholder="e.g. mid-November, or a weekend in July"></div>
+            <div class="field full">
+              <label id="dates-label">Preferred dates</label>
+              <div class="datepick" role="group" aria-labelledby="dates-label">
+                <div class="dp-head">
+                  <button type="button" class="dp-nav" data-dp="prev" aria-label="Previous month">‹</button>
+                  <div class="dp-title" id="dp-title" aria-live="polite"></div>
+                  <button type="button" class="dp-nav" data-dp="next" aria-label="Next month">›</button>
+                </div>
+                <div class="dp-months" id="dp-months"></div>
+                <div class="dp-foot">
+                  <span class="dp-readout" id="dp-readout">Tap your arrival date, then your departure.</span>
+                  <button type="button" class="dp-clear" id="dp-clear" hidden>Clear</button>
+                </div>
+                <label class="dp-flex"><input type="checkbox" id="dp-flex" name="flexible" value="yes"> My dates are flexible</label>
+              </div>
+              <input type="hidden" id="dates" name="dates">
+            </div>
             <div class="field full"><label for="msg">Anything else?</label><textarea id="msg" name="msg" placeholder="Species you're after, first-timers in the group, questions…"></textarea></div>
           </div>
           <button class="btn lg" type="submit" style="margin-top:1.4rem;width:100%;justify-content:center">Send Request <span class="arw">→</span></button>
@@ -127,5 +143,187 @@
   </div>
 </div>
 </footer>
+<script>
+/* J RANCH — inquiry date-range calendar */
+(function () {
+  "use strict";
+  var monthsEl = document.getElementById("dp-months");
+  if (!monthsEl) return;
+
+  var titleEl   = document.getElementById("dp-title");
+  var readoutEl = document.getElementById("dp-readout");
+  var clearBtn  = document.getElementById("dp-clear");
+  var flexEl    = document.getElementById("dp-flex");
+  var hidden    = document.getElementById("dates");
+
+  var DOW   = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+  var MON   = ["January","February","March","April","May","June","July",
+               "August","September","October","November","December"];
+  var MONS  = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  var DAYS  = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+
+  var today = new Date(); today.setHours(0, 0, 0, 0);
+  var view  = new Date(today.getFullYear(), today.getMonth(), 1);
+  var start = null, end = null, hover = null;
+
+  // show two months on wider screens, one on narrow
+  function monthCount() { return window.matchMedia("(min-width: 720px)").matches ? 2 : 1; }
+  function key(d) { return d.getFullYear() * 10000 + d.getMonth() * 100 + d.getDate(); }
+  function same(a, b) { return a && b && key(a) === key(b); }
+  function fmt(d) { return DAYS[d.getDay()] + ", " + MONS[d.getMonth()] + " " + d.getDate(); }
+
+  function within(d) {
+    var lo = start, hi = end || hover;
+    if (!lo || !hi) return false;
+    var a = key(lo), b = key(hi), k = key(d);
+    if (a > b) { var t = a; a = b; b = t; }
+    return k > a && k < b;
+  }
+
+  function pick(d) {
+    if (!start || (start && end)) { start = d; end = null; }
+    else if (key(d) < key(start)) { start = d; }
+    else if (key(d) === key(start)) { end = d; }
+    else { end = d; }
+    render();
+  }
+
+  function render() {
+    monthsEl.innerHTML = "";
+    var n = monthCount();
+    for (var m = 0; m < n; m++) {
+      monthsEl.appendChild(buildMonth(view.getFullYear(), view.getMonth() + m));
+    }
+    var first = view;
+    var last  = new Date(view.getFullYear(), view.getMonth() + n - 1, 1);
+    titleEl.textContent = n === 2
+      ? MON[first.getMonth()] + " – " + MON[last.getMonth()] + " " + last.getFullYear()
+      : MON[first.getMonth()] + " " + first.getFullYear();
+    updateReadout();
+  }
+
+  function buildMonth(year, monthIdx) {
+    var base = new Date(year, monthIdx, 1);
+    var wrap = document.createElement("div");
+    wrap.className = "dp-month";
+
+    var cap = document.createElement("div");
+    cap.className = "dp-mname";
+    cap.textContent = MON[base.getMonth()] + " " + base.getFullYear();
+    wrap.appendChild(cap);
+
+    var grid = document.createElement("div");
+    grid.className = "dp-grid";
+    DOW.forEach(function (d) {
+      var h = document.createElement("span");
+      h.className = "dp-dow"; h.textContent = d; grid.appendChild(h);
+    });
+
+    var lead = base.getDay();
+    for (var i = 0; i < lead; i++) grid.appendChild(document.createElement("span"));
+
+    var days = new Date(year, monthIdx + 1, 0).getDate();
+    for (var day = 1; day <= days; day++) {
+      var d = new Date(year, monthIdx, day);
+      var cell = document.createElement("button");
+      cell.type = "button";
+      cell.className = "dp-day";
+      cell.textContent = day;
+
+      if (key(d) < key(today)) {
+        cell.disabled = true; cell.classList.add("is-disabled");
+      } else {
+        if (same(d, today)) cell.classList.add("is-today");
+        if (same(d, start)) cell.classList.add("is-start", "is-sel");
+        if (same(d, end))   cell.classList.add("is-end", "is-sel");
+        if (within(d))      cell.classList.add("in-range");
+        (function (dd) {
+          cell.addEventListener("click", function () { pick(dd); });
+          cell.addEventListener("mouseenter", function () {
+            if (start && !end) { hover = dd; paintRange(); }
+          });
+        })(d);
+      }
+      grid.appendChild(cell);
+    }
+    wrap.appendChild(grid);
+    return wrap;
+  }
+
+  // lightweight repaint of range on hover (no full rebuild)
+  function paintRange() {
+    monthsEl.querySelectorAll(".dp-day").forEach(function (cell) {
+      cell.classList.remove("in-range", "is-end-preview");
+    });
+    if (!(start && !end && hover)) return;
+    monthsEl.querySelectorAll(".dp-day:not(.is-disabled)").forEach(function (cell) {
+      var day = parseInt(cell.textContent, 10);
+      // resolve the cell's month via its parent caption
+      var cap = cell.closest(".dp-month").querySelector(".dp-mname").textContent.split(" ");
+      var mi = MON.indexOf(cap[0]), yr = parseInt(cap[1], 10);
+      var d = new Date(yr, mi, day);
+      if (within(d)) cell.classList.add("in-range");
+      if (same(d, hover) && key(hover) !== key(start)) cell.classList.add("is-end-preview");
+    });
+  }
+
+  function updateReadout() {
+    if (start && end) {
+      var lo = start, hi = end;
+      if (key(lo) > key(hi)) { var t = lo; lo = hi; hi = t; }
+      var nights = Math.round((hi - lo) / 86400000);
+      var label = fmt(lo) + "  →  " + fmt(hi) +
+                  (nights > 0 ? "  ·  " + nights + " night" + (nights > 1 ? "s" : "") : "  ·  day trip");
+      readoutEl.textContent = label;
+      readoutEl.classList.add("has-val");
+      clearBtn.hidden = false;
+      writeHidden(fmt(lo) + " to " + fmt(hi) + " (" + lo.getFullYear() + ")");
+    } else if (start) {
+      readoutEl.textContent = "Arrival " + fmt(start) + " — now pick your departure.";
+      readoutEl.classList.add("has-val");
+      clearBtn.hidden = false;
+      writeHidden(fmt(start) + " (" + start.getFullYear() + ")");
+    } else {
+      readoutEl.textContent = "Tap your arrival date, then your departure.";
+      readoutEl.classList.remove("has-val");
+      clearBtn.hidden = true;
+      writeHidden("");
+    }
+  }
+
+  function writeHidden(text) {
+    if (text && flexEl && flexEl.checked) text += " — flexible";
+    else if (!text && flexEl && flexEl.checked) text = "Flexible / open to suggestions";
+    hidden.value = text;
+  }
+
+  monthsEl.addEventListener("mouseleave", function () {
+    hover = null; render();
+  });
+
+  document.querySelectorAll("[data-dp]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var step = btn.getAttribute("data-dp") === "next" ? 1 : -1;
+      view = new Date(view.getFullYear(), view.getMonth() + step, 1);
+      // don't page earlier than the current month
+      var floor = new Date(today.getFullYear(), today.getMonth(), 1);
+      if (view < floor) view = floor;
+      render();
+    });
+  });
+
+  clearBtn.addEventListener("click", function () {
+    start = end = hover = null; render();
+  });
+  if (flexEl) flexEl.addEventListener("change", updateReadout);
+
+  var rt;
+  window.addEventListener("resize", function () {
+    clearTimeout(rt); rt = setTimeout(render, 150);
+  });
+
+  render();
+})();
+</script>
 <script src="main.js"></script>
 </body></html>
