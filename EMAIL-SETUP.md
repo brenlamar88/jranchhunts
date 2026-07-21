@@ -54,7 +54,7 @@ Set these only if you want to change the defaults; the form works without them.
   straight from their inbox to reach the person who inquired.
 - A hidden "honeypot" field silently drops bot spam.
 - If the key is missing or Resend errors, the visitor sees a message asking
-  them to call **(830) 555-0142** or email **hunt@jranchhunts.com**, so no
+  them to call **(337) 802-1336** or text one of the ranch numbers, so no
   inquiry is silently lost.
 
 ## Testing after setup

@@ -88,7 +88,7 @@
         msg ||
         (ok
           ? "Thanks — your request is in. We'll be in touch shortly with availability."
-          : "Sorry — we couldn't send that. Please call (337) 802-1336 or email hunt@jranchhunts.com.");
+          : "Sorry — we couldn't send that. Please call or text (337) 802-1336 and we'll take care of you.");
       note.hidden = false;
       note.focus();
     }
