@@ -75,17 +75,72 @@
     });
   }
 
-  /* ---- simple contact form guard (no backend) ---- */
+  /* ---- inquiry form: send via /api/inquiry ---- */
   var form = document.getElementById("inquiry-form");
   if (form) {
+    var note = document.getElementById("form-note");
+    var btn = form.querySelector('button[type="submit"]');
+
+    function showNote(ok, msg) {
+      if (!note) return;
+      note.classList.toggle("is-error", !ok);
+      note.textContent =
+        msg ||
+        (ok
+          ? "Thanks — your request is in. We'll be in touch shortly with availability."
+          : "Sorry — we couldn't send that. Please call (830) 555-0142 or email hunt@jranchhunts.com.");
+      note.hidden = false;
+      note.focus();
+    }
+
     form.addEventListener("submit", function (e) {
       e.preventDefault();
-      var note = document.getElementById("form-note");
-      if (note) {
-        note.hidden = false;
-        note.focus();
+
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
       }
-      form.reset();
+
+      var data = {};
+      new FormData(form).forEach(function (v, k) {
+        data[k] = v;
+      });
+
+      var label = btn ? btn.innerHTML : "";
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = "Sending…";
+      }
+
+      fetch(form.getAttribute("action") || "/api/inquiry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      })
+        .then(function (r) {
+          return r
+            .json()
+            .catch(function () {
+              return {};
+            })
+            .then(function (payload) {
+              if (!r.ok) throw new Error(payload.error || "Request failed");
+              return payload;
+            });
+        })
+        .then(function () {
+          showNote(true);
+          form.reset(); // also resets the calendar via its "reset" listener
+        })
+        .catch(function (err) {
+          showNote(false, err && err.message && /valid email|name/i.test(err.message) ? err.message : null);
+        })
+        .finally(function () {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = label;
+          }
+        });
     });
   }
 })();

@@ -45,8 +45,9 @@
       <div class="on-dark" style="background:var(--forest);padding:clamp(1.6rem,3vw,2.4rem);border-radius:var(--radius);border:1px solid var(--line-dk)" data-reveal>
         <p class="eyebrow">Request Dates</p>
         <h2 class="display h2" style="font-size:clamp(1.6rem,3vw,2.2rem);margin:.6rem 0 1.4rem">Send an inquiry</h2>
-        <p id="form-note" hidden tabindex="-1" style="background:rgba(199,154,70,.15);border:1px solid var(--brass);color:var(--bone);padding:.9rem 1rem;border-radius:3px;margin-bottom:1.2rem">Thanks — your request is in. We'll be in touch shortly with availability. <em>(Demo form — connect this to your inbox or CRM.)</em></p>
-        <form id="inquiry-form" novalidate>
+        <p id="form-note" hidden tabindex="-1" role="status">Thanks — your request is in. We'll be in touch shortly with availability.</p>
+        <form id="inquiry-form" action="/api/inquiry" method="post" novalidate>
+          <input type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" class="hp-field">
           <div class="form-grid">
             <div class="field"><label for="fn">First name</label><input id="fn" name="fn" autocomplete="given-name" required></div>
             <div class="field"><label for="ln">Last name</label><input id="ln" name="ln" autocomplete="family-name" required></div>
@@ -316,6 +317,13 @@
     start = end = hover = null; render();
   });
   if (flexEl) flexEl.addEventListener("change", updateReadout);
+
+  // when the form is reset after a successful send, clear the calendar too
+  var formEl = document.getElementById("inquiry-form");
+  if (formEl) formEl.addEventListener("reset", function () {
+    start = end = hover = null;
+    setTimeout(render, 0); // let the native reset clear the flexible checkbox first
+  });
 
   var rt;
   window.addEventListener("resize", function () {
