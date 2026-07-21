@@ -169,8 +169,14 @@
   var view  = new Date(today.getFullYear(), today.getMonth(), 1);
   var start = null, end = null, hover = null;
 
-  // show two months on wider screens, one on narrow
-  function monthCount() { return window.matchMedia("(min-width: 720px)").matches ? 2 : 1; }
+  // show two months only when the calendar's own container is wide enough
+  // for them (not just the viewport) — otherwise a narrow form column would
+  // push the second month past the border
+  function monthCount() {
+    var w = monthsEl.clientWidth ||
+            (monthsEl.parentElement ? monthsEl.parentElement.clientWidth : 0);
+    return w >= 560 ? 2 : 1;
+  }
   function key(d) { return d.getFullYear() * 10000 + d.getMonth() * 100 + d.getDate(); }
   function same(a, b) { return a && b && key(a) === key(b); }
   function fmt(d) { return DAYS[d.getDay()] + ", " + MONS[d.getMonth()] + " " + d.getDate(); }
@@ -194,6 +200,7 @@
   function render() {
     monthsEl.innerHTML = "";
     var n = monthCount();
+    monthsEl.style.gridTemplateColumns = "repeat(" + n + ", minmax(0, 1fr))";
     for (var m = 0; m < n; m++) {
       monthsEl.appendChild(buildMonth(view.getFullYear(), view.getMonth() + m));
     }
