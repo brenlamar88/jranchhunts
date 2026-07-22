@@ -10,7 +10,7 @@
  *
  * Optional overrides:
  *   INQUIRY_TO       Comma-separated recipients
- *                    (default: Aalvarado@freedomhc.com, jreed@freedomhc.com)
+ *                    (default: hunts@jranchhunts.com)
  *   INQUIRY_FROM     Verified sender (default: "J Ranch Hunts <hunts@jranchhunts.com>")
  *                    The domain here MUST be verified in your Resend account.
  */
@@ -53,7 +53,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Please include your name and a valid email." });
   }
 
-  const to = (process.env.INQUIRY_TO || "broberts@freedomhc.com") // TEMP: testing recipient (revert to Aalvarado@freedomhc.com, jreed@freedomhc.com)
+  const to = (process.env.INQUIRY_TO || "hunts@jranchhunts.com")
     .split(",").map((s) => s.trim()).filter(Boolean);
   const from = process.env.INQUIRY_FROM || "J Ranch Hunts <hunts@jranchhunts.com>";
 
