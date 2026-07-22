@@ -1,0 +1,12 @@
+{
+  "redirects": [
+    { "source": "/the-ranch", "destination": "/", "permanent": false },
+    { "source": "/the-ranch.html", "destination": "/", "permanent": false },
+    { "source": "/gallery", "destination": "/", "permanent": false },
+    { "source": "/gallery.html", "destination": "/", "permanent": false },
+    { "source": "/lodging", "destination": "/", "permanent": false },
+    { "source": "/lodging.html", "destination": "/", "permanent": false },
+    { "source": "/packages", "destination": "/", "permanent": false },
+    { "source": "/packages.html", "destination": "/", "permanent": false }
+  ]
+}
