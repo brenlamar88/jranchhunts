@@ -124,12 +124,7 @@
               return {};
             })
             .then(function (payload) {
-              if (!r.ok) {
-                var e = new Error(payload.error || "Request failed");
-                e.detail = payload.detail;
-                e.httpStatus = r.status;
-                throw e;
-              }
+              if (!r.ok) throw new Error(payload.error || "Request failed");
               return payload;
             });
         })
@@ -138,11 +133,7 @@
           form.reset(); // also resets the calendar via its "reset" listener
         })
         .catch(function (err) {
-          // TEMP debug: surface the real server/Resend reason on the page
-          var msg = err && err.message ? err.message : null;
-          if (err && err.httpStatus) msg = "[" + err.httpStatus + "] " + (msg || "");
-          if (err && err.detail) msg = (msg || "") + " — " + err.detail;
-          showNote(false, msg);
+          showNote(false, err && err.message && /valid email|name/i.test(err.message) ? err.message : null);
         })
         .finally(function () {
           if (btn) {

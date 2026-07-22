@@ -118,12 +118,11 @@ export default async function handler(req, res) {
     if (!r.ok) {
       const detail = await r.text().catch(() => "");
       console.error("Resend error", r.status, detail);
-      // TEMP debug: return the Resend reason so it shows on the page
-      return res.status(502).json({ error: "We couldn't send your request right now.", detail: `Resend ${r.status}: ${String(detail).slice(0, 300)}` });
+      return res.status(502).json({ error: "We couldn't send your request right now." });
     }
     return res.status(200).json({ ok: true });
   } catch (err) {
     console.error("Inquiry send failed", err);
-    return res.status(502).json({ error: "We couldn't send your request right now.", detail: String(err).slice(0, 300) });
+    return res.status(502).json({ error: "We couldn't send your request right now." });
   }
 }
