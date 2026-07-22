@@ -55,7 +55,7 @@ export default async function handler(req, res) {
 
   const to = (process.env.INQUIRY_TO || "hunts@jranchhunts.com")
     .split(",").map((s) => s.trim()).filter(Boolean);
-  const from = process.env.INQUIRY_FROM || "J Ranch Hunts <hunts@jranchhunts.com>";
+  const from = process.env.INQUIRY_FROM || "J Ranch Hunts <noreply@jranchhunts.com>";
 
   const name = [fn, ln].filter(Boolean).join(" ");
   const hunt = String(body.hunt || "").trim();
@@ -118,11 +118,12 @@ export default async function handler(req, res) {
     if (!r.ok) {
       const detail = await r.text().catch(() => "");
       console.error("Resend error", r.status, detail);
-      return res.status(502).json({ error: "We couldn't send your request right now." });
+      // TEMP debug: return the Resend reason so it shows on the page
+      return res.status(502).json({ error: "We couldn't send your request right now.", detail: `Resend ${r.status}: ${String(detail).slice(0, 300)}` });
     }
     return res.status(200).json({ ok: true });
   } catch (err) {
     console.error("Inquiry send failed", err);
-    return res.status(502).json({ error: "We couldn't send your request right now." });
+    return res.status(502).json({ error: "We couldn't send your request right now.", detail: String(err).slice(0, 300) });
   }
 }
