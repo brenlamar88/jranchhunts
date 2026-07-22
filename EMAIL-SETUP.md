@@ -45,7 +45,7 @@ Set these only if you want to change the defaults; the form works without them.
 
 | Name | Default | Purpose |
 |------|---------|---------|
-| `INQUIRY_FROM` | `J Ranch Hunts <noreply@jranchhunts.com>` | The "from" address. Its **domain must be the one you verified** in step 1. If you use a different mailbox, set this to e.g. `J Ranch Hunts <hunt@jranchhunts.com>`. |
+| `INQUIRY_FROM` | `J Ranch Hunts <hunts@jranchhunts.com>` | The "from" address. Its **domain must be the one you verified** in step 1. If you use a different mailbox, set this to e.g. `J Ranch Hunts <hunt@jranchhunts.com>`. |
 | `INQUIRY_TO` | `Aalvarado@freedomhc.com, jreed@freedomhc.com` | Comma-separated recipients. Add or change addresses here — no code change needed. |
 
 ## How it behaves
