@@ -11,7 +11,7 @@
  * Optional overrides:
  *   INQUIRY_TO       Comma-separated recipients
  *                    (default: Aalvarado@freedomhc.com, jreed@freedomhc.com)
- *   INQUIRY_FROM     Verified sender, e.g. "J Ranch Hunts <noreply@freedomhc.com>"
+ *   INQUIRY_FROM     Verified sender (default: "J Ranch Hunts <noreply@jranchhunts.com>")
  *                    The domain here MUST be verified in your Resend account.
  */
 
@@ -55,7 +55,7 @@ export default async function handler(req, res) {
 
   const to = (process.env.INQUIRY_TO || "Aalvarado@freedomhc.com, jreed@freedomhc.com")
     .split(",").map((s) => s.trim()).filter(Boolean);
-  const from = process.env.INQUIRY_FROM || "J Ranch Hunts <noreply@freedomhc.com>";
+  const from = process.env.INQUIRY_FROM || "J Ranch Hunts <noreply@jranchhunts.com>";
 
   const name = [fn, ln].filter(Boolean).join(" ");
   const hunt = String(body.hunt || "").trim();
