@@ -53,7 +53,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Please include your name and a valid email." });
   }
 
-  const to = (process.env.INQUIRY_TO || "Aalvarado@freedomhc.com, jreed@freedomhc.com")
+  const to = (process.env.INQUIRY_TO || "brennan@fusepros.com") // TEMP: testing recipient (was Aalvarado@freedomhc.com, jreed@freedomhc.com)
     .split(",").map((s) => s.trim()).filter(Boolean);
   const from = process.env.INQUIRY_FROM || "J Ranch Hunts <noreply@jranchhunts.com>";
 
