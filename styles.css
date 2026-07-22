@@ -175,6 +175,9 @@ ul{ margin:0; padding:0; list-style:none; }
 }
 .brand{ display:flex; align-items:center; gap:.7rem; color:var(--bone); }
 .brand .mark{ width:34px; height:34px; flex:none; }
+.brand-logo{ height:46px; width:auto; display:block; }
+.footer-about .brand-logo{ height:66px; }
+@media (max-width:520px){ .brand-logo{ height:40px; } }
 .brand .wordmark{ font-family:var(--display); font-weight:700; letter-spacing:.14em; font-size:1.18rem; text-transform:uppercase; line-height:1; }
 .brand .wordmark small{ display:block; font-family:var(--label); font-weight:500; letter-spacing:.3em; font-size:.5rem; color:var(--brass); margin-top:3px; }
 
@@ -588,3 +591,9 @@ ul{ margin:0; padding:0; list-style:none; }
   position:absolute !important; left:-9999px !important;
   width:1px; height:1px; opacity:0; pointer-events:none;
 }
+
+/* gallery of real landscape photos — clean 3-up grid, no crop */
+.gallery-photos{ grid-template-columns:repeat(3,1fr); }
+.gallery-photos figure{ aspect-ratio:3 / 2; }
+@media (max-width:760px){ .gallery-photos{ grid-template-columns:repeat(2,1fr); } }
+@media (max-width:460px){ .gallery-photos{ grid-template-columns:1fr; } }
